@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "english-prep-platform-phase2-auth",
-    "name": "English Test Prep Platform \u2014 Auth (Phase 2)",
-    "description": "Auth endpoints per PROJECT_BRIEF.md Section 6. Import into Postman, set the 'baseUrl' collection variable, run Register -> Login -> Me in order. The Login request auto-saves its token into the 'token' variable.",
+    "_postman_id": "english-prep-platform-phase3",
+    "name": "English Test Prep Platform \u2014 Full API (Phases 2-3)",
+    "description": "All endpoints per PROJECT_BRIEF.md Section 6. Import into Postman, set 'baseUrl' (default http://localhost:5000), run Auth Register -> Login first (Login auto-saves 'token'). Seed data required: npm run db:seed. Admin endpoints need the admin token (admin@example.com / admin1234) \u2014 log in as admin and overwrite 'token' to test them.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -12,6 +12,18 @@
     },
     {
       "key": "token",
+      "value": ""
+    },
+    {
+      "key": "testId",
+      "value": ""
+    },
+    {
+      "key": "lessonId",
+      "value": ""
+    },
+    {
+      "key": "flashcardId",
       "value": ""
     }
   ],
@@ -29,15 +41,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Test Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
               "host": [
@@ -49,7 +52,16 @@
                 "register"
               ]
             },
-            "description": "POST /api/auth/register \u2014 Body: {name, email, password} \u2192 201 {token, user} | 400 validation | 409 duplicate email"
+            "description": "Register \u2014 POST /api/auth/register {name,email,password} -> 201 {token,user}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           },
           "response": []
         },
@@ -94,7 +106,7 @@
                 "login"
               ]
             },
-            "description": "POST /api/auth/login \u2014 Body: {email, password} \u2192 200 {token, user} | 400 validation | 401 invalid credentials. Saves token to collection variable."
+            "description": "Login \u2014 POST /api/auth/login -> 200 {token,user}. Saves token."
           },
           "response": []
         },
@@ -119,7 +131,530 @@
                 "me"
               ]
             },
-            "description": "GET /api/auth/me \u2014 protected, requires Bearer token \u2192 200 {user} | 401 unauthenticated"
+            "description": "Me (protected) \u2014 GET /api/auth/me -> 200 {user}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lessons",
+      "item": [
+        {
+          "name": "List Lessons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lessons"
+              ]
+            },
+            "description": "List Lessons \u2014 GET /api/lessons?category=IELTS"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lesson",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lessons",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Get Lesson \u2014 GET /api/lessons/:id"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Lesson (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lessons"
+              ]
+            },
+            "description": "Create Lesson (admin) \u2014 POST /api/lessons -> 201",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New Lesson\",\n  \"content\": \"Lesson content...\",\n  \"category\": \"IELTS\",\n  \"order\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Lesson (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lessons",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Update Lesson (admin) \u2014 PUT /api/lessons/:id",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Lesson (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lessons",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Delete Lesson (admin) \u2014 DELETE /api/lessons/:id"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tests (generic engine)",
+      "item": [
+        {
+          "name": "List Tests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tests"
+              ]
+            },
+            "description": "List Tests \u2014 GET /api/tests?type=SAT&section=SAT_MATH"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Questions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tests/{{testId}}/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{testId}}",
+                "questions"
+              ]
+            },
+            "description": "Get Questions \u2014 GET /api/tests/:id/questions (no answers leaked)"
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tests/{{testId}}/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{testId}}",
+                "submit"
+              ]
+            },
+            "description": "Submit Test \u2014 POST /api/tests/:id/submit {answers:[{questionId,answer}],timeTaken} -> {score,scaledScore,correctAnswers}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    {\n      \"questionId\": \"paste-question-id-here\",\n      \"answer\": \"paste-option-text-here\"\n    }\n  ],\n  \"timeTaken\": 600\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Flashcards (SM-2)",
+      "item": [
+        {
+          "name": "Due Cards",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/flashcards/due",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "flashcards",
+                "due"
+              ]
+            },
+            "description": "Due Cards \u2014 GET /api/flashcards/due"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/flashcards",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "flashcards"
+              ]
+            },
+            "description": "Create Card \u2014 POST /api/flashcards {front,back,category} -> 201",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"front\": \"abundant\",\n  \"back\": \"plentiful\",\n  \"category\": \"GRE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Review Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/flashcards/{{flashcardId}}/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "flashcards",
+                "{{flashcardId}}",
+                "review"
+              ]
+            },
+            "description": "Review Card \u2014 POST /api/flashcards/:id/review {quality:0-5} -> SM-2 update",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quality\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Card",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/flashcards/{{flashcardId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "flashcards",
+                "{{flashcardId}}"
+              ]
+            },
+            "description": "Delete Card \u2014 DELETE /api/flashcards/:id"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Upload",
+      "item": [
+        {
+          "name": "Upload Audio/Video",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "upload"
+              ]
+            },
+            "description": "Upload Audio/Video \u2014 POST /api/upload (multipart field 'file') -> {url,key}",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/recording.mp3"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Progress",
+      "item": [
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "progress",
+                "dashboard"
+              ]
+            },
+            "description": "Dashboard \u2014 GET /api/progress/dashboard (aggregates for charts)"
+          },
+          "response": []
+        },
+        {
+          "name": "History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "progress",
+                "history"
+              ]
+            },
+            "description": "History \u2014 GET /api/progress/history?testType=IELTS"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin (backend; UI Phase 6)",
+      "item": [
+        {
+          "name": "List Users (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            },
+            "description": "List Users (admin) \u2014 GET /api/admin/users"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Role (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{userId}}/role",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{userId}}",
+                "role"
+              ]
+            },
+            "description": "Update Role (admin) \u2014 PATCH /api/admin/users/:id/role {role}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           },
           "response": []
         }

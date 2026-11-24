@@ -5,6 +5,89 @@ Instruction 10). Format: newest phase first.
 
 ---
 
+## [Phase 3] — Core Backend APIs — Checkpoint 3
+
+**Date:** 2026-11-24
+**Branch:** `feature/core-apis` (from `develop`)
+**Status:** ✅ Complete — awaiting human review. Phase 4 NOT started.
+
+### Added
+- **Lesson CRUD** (`lesson.controller.ts` + routes):
+  `GET /api/lessons?category=`, `GET /:id`, `POST` / `PUT` /
+  `DELETE` (admin-only via `requireAdmin` from Phase 2).
+- **Generic Test engine** (`test.controller.ts` + routes) — one
+  implementation for all 7 exam types, parameterized by
+  `TestType`/`Section` (no per-exam modules):
+  `GET /api/tests?type=&section=`, `GET /:id/questions`
+  (correctAnswer never leaked), `POST /:id/submit` (auth) which
+  auto-scores, persists `Progress` + `Submission` rows in a
+  transaction, and returns `{score, scaledScore, correctAnswers}`.
+- **Per-exam scoring** (`services/scoreCalculator.ts`) — single
+  generic function covering all 7 scales (Section 2): IELTS
+  0–9, GRE 130–170, TOEFL 0–30/section, PTE 10–90, SAT 200–800
+  via raw→scaled lookup table (Section 8), DET 10–160 (×5),
+  CAE 142–210 / CPE 180–230. Writing/Speaking counted as
+  `pendingReview`, never auto-scored. MVP fixed-form
+  approximations documented in the file header.
+- **SM-2 algorithm** (`services/sm2Algorithm.ts`) — implemented
+  **exactly** per Section 7 (calculation order preserved).
+  **Unit tests** (`tests/sm2Algorithm.test.ts`): 7 cases covering
+  all 5 required scenarios (quality<3 reset, quality≥3 interval,
+  easeFactor floor 1.3, first rep → 1, second rep → 6) + ease
+  formula + dueDate. Plus `tests/scoreCalculator.test.ts`
+  (12 cases, all 7 scales + SAT table).
+- **Flashcard endpoints**: `GET /due` (Redis-cached 60s with
+  PostgreSQL fallback — Redis optional, never breaks the API),
+  `POST /`, `POST /:id/review` (SM-2 update, quality 0–5
+  validated), `DELETE /:id` (own cards only).
+- **File upload** (`POST /api/upload`, auth, multipart `file`,
+  audio/video only, 100 MB max): S3 when `AWS_S3_BUCKET` +
+  credentials are set, otherwise local `backend/uploads/`
+  fallback (git-ignored, served at `/uploads/...`). Same
+  response shape either way.
+- **Progress endpoints**: `GET /dashboard` (totals, average %,
+  per-exam-type averages, flashcards due, recent attempts —
+  feeds Phase 5 charts), `GET /history?testType=`.
+- **Admin backend** (`GET /api/admin/users`,
+  `PATCH /:id/role`, admin-only, passwords never returned).
+  Backend only — admin UI is Phase 6.
+- **Seed data** (`src/prisma/seed.ts`, `npm run db:seed`):
+  7 lessons + **9 tests / 24 questions** (IELTS×2, GRE×2,
+  TOEFL/PTE/SAT/DET/CAE×1 each — including CAE CLOZE /
+  WORD_FORMATION types) + dev users
+  `student@example.com/password123`,
+  `admin@example.com/admin1234`. Idempotent re-runs.
+- **Docs**: full `API_DOCUMENTATION.md` (all Section 6
+  endpoints), expanded `postman_collection.json` (all Phase 3
+  endpoints), `server.ts` mounts all routes + `/uploads` static.
+
+### Verification (live PostgreSQL + running server)
+- `tsc --noEmit` ✅ · `npm run build` ✅
+- Jest: **28/28 passed** (SM-2 7 + scoring 12 + auth 9 regression)
+- Seed: 7 lessons, 9 tests, 24 questions, 2 users ✅
+- Live curl: lessons filter + 400 on bad category; tests filter
+  by type/section; questions leak **0** correctAnswers; submit
+  IELTS 2/3 → band **6.0**, SAT 2/3 → **230** (lookup table),
+  CAE 3/3 → **210** (case-insensitive cloze); flashcards
+  create→due→review (rep 1, interval 1, ease 2.60)→delete;
+  upload audio → local URL, text file → 400; dashboard/history
+  aggregates; admin list (no passwords), student → 403 on
+  admin routes. Temp test data cleaned up (progress history
+  retained as proof).
+
+### Not yet implemented (by design — later phases)
+- Frontend pages/components (Phases 4–6)
+- Adaptive SAT/DET logic (Phase 2 feature per Section 8)
+- Real S3 bucket / production deploy (Phase 8)
+
+### Notes
+- Question ordering: the brief's schema has no `order` field
+  for questions, so `GET /:id/questions` orders by `id`
+  (deterministic). Do not add schema fields without approval.
+- `backend/uploads/` (local upload fallback) is git-ignored.
+
+---
+
 ## [Phase 2] — Database & Auth — Checkpoint 2
 
 **Date:** 2026-11-24
