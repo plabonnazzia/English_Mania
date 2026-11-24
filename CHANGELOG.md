@@ -5,6 +5,23 @@ Instruction 10). Format: newest phase first.
 
 ---
 
+## [Phase 6] — Admin Panel — Checkpoint 6
+
+**Date:** 2026-11-24
+**Branch:** `feature/admin-panel` (from `develop`)
+**Status:** ✅ Complete — awaiting human review. Phase 7 NOT started.
+
+### Added
+- `frontend/app/(dashboard)/admin/users/page.tsx` — admin-only user list (`GET /api/admin/users`) and role toggle (`PATCH /api/admin/users/:id/role`).
+- `frontend/app/(dashboard)/admin/content/page.tsx` — admin-only lesson creation (`POST /api/lessons`) and deletion (`DELETE /api/lessons/:id`).
+- Removed Phase 1 placeholder `frontend/app/admin/*` to resolve Next.js parallel route conflict with `(dashboard)/admin/*`.
+
+### Verification
+- `cd frontend && npx tsc --noEmit` — exit 0 ✅
+- `cd frontend && npm run build` — exit 0 ✅
+
+---
+
 ## [Phase 5] — Test & Flashcard UI — Checkpoint 5
 
 **Date:** 2026-11-24
