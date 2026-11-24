@@ -5,10 +5,11 @@ Duolingo English Test (DET), and Cambridge (CAE/CPE)** — built with a
 **generic, reusable test engine** parameterized by `TestType` / `Section`
 (see `PROJECT_BRIEF.md` Section 1). No per-exam hardcoded modules.
 
-> **Status: Phase 2 complete (Checkpoint 2).** Database schema,
-> migrations, and auth (register/login/JWT) are implemented and
-> tested. Lesson/Test/Flashcard APIs are Phase 3 and have **not**
-> been implemented yet. See `CHANGELOG.md`.
+> **Status: Phase 3 complete (Checkpoint 3).** All core backend
+> APIs are implemented and tested (lessons, generic test engine
+> for all 7 exams, SM-2 flashcards, upload, progress, admin
+> backend). Frontend pages are Phase 4+ and have **not** been
+> implemented yet. See `CHANGELOG.md`.
 
 ## Tech Stack (PROJECT_BRIEF.md Section 3 — used exactly)
 
@@ -54,6 +55,7 @@ cd backend
 cp .env.example .env        # fill in DATABASE_URL, JWT_SECRET, etc.
 npm install
 npm run prisma:migrate      # apply migrations (creates tables)
+npm run db:seed             # seed lessons/tests + dev users (see below)
 npm run dev                 # http://localhost:5000  (GET /health, /api/auth/*)
 npm test                    # Jest auth tests (requires DB running)
 ```
@@ -69,6 +71,13 @@ npm run dev                 # http://localhost:3000
 > **Note:** `npm install` has not been run in the agent sandbox for
 > Phase 1 (dependencies are declared in `package.json`). Run it locally
 > before `npm run dev`. Database migrations are **Phase 2**.
+
+### Seed data & dev users
+```bash
+npm run db:seed
+# student@example.com / password123  (STUDENT)
+# admin@example.com   / admin1234    (ADMIN)
+```
 
 ## Environment Variables
 
