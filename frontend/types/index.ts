@@ -69,3 +69,52 @@ export interface DashboardStats {
   byTestType: Record<string, { attempts: number; averagePercentage: number }>;
   recentProgress: ProgressItem[];
 }
+
+export interface TestSummary {
+  id: string;
+  type: TestType;
+  section: string;
+  title: string;
+  duration: number;
+  createdAt: string;
+  _count?: { questions: number };
+}
+
+export interface Question {
+  id: string;
+  questionText: string;
+  questionType: string;
+  options: string[] | null;
+  audioUrl: string | null;
+  imageUrl: string | null;
+}
+
+export interface CorrectAnswerItem {
+  questionId: string;
+  correctAnswer: string;
+  correct: boolean | null;
+}
+
+export interface SubmitTestResponse {
+  score: number;
+  maxScore: number;
+  scaledScore: number;
+  scale: string;
+  percentage: number;
+  pendingReview: number;
+  correctAnswers: CorrectAnswerItem[];
+  progressId: string;
+}
+
+export interface Flashcard {
+  id: string;
+  userId: string;
+  front: string;
+  back: string;
+  category: TestType;
+  easeFactor: number;
+  interval: number;
+  repetitions: number;
+  dueDate: string;
+  createdAt: string;
+}

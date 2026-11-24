@@ -5,6 +5,31 @@ Instruction 10). Format: newest phase first.
 
 ---
 
+## [Phase 5] — Test & Flashcard UI — Checkpoint 5
+
+**Date:** 2026-11-24
+**Branch:** `feature/test-flashcard-ui` (from `develop`)
+**Status:** ✅ Complete — awaiting human review. Phase 6 NOT started.
+
+### Added
+- **Test Engine UI**:
+  - `frontend/components/tests/TestInterface.tsx` — countdown timer, question navigation, audio/image rendering, MCQ/Writing/Speaking/Use-of-English inputs, submit & scaled-score results breakdown.
+  - `frontend/components/tests/RecordingWidget.tsx` — MediaRecorder audio/video capture + upload to `/api/upload`.
+  - `frontend/components/tests/UseOfEnglishQuestion.tsx` — Cambridge CAE/CPE Cloze, Word Formation, and Key Word Transformation input.
+  - `frontend/app/(dashboard)/tests/page.tsx` & `frontend/app/(dashboard)/tests/[id]/page.tsx` — exam filter pills + protected test runner.
+- **Flashcards UI**:
+  - `frontend/components/flashcards/FlashcardReview.tsx` — flip card + SM-2 quality (0–5) rating buttons.
+  - `frontend/app/(dashboard)/flashcards/page.tsx` — due queue review + new flashcard creation form.
+- **Progress & Analytics UI**:
+  - `frontend/components/progress/ProgressChart.tsx` — Recharts `BarChart` score trend.
+  - `frontend/app/(dashboard)/progress/page.tsx` — chart + attempt history table.
+
+### Verification
+- `cd frontend && npx tsc --noEmit` — exit 0 ✅
+- `cd frontend && npm run build` — exit 0 ✅
+
+---
+
 ## [Phase 4] — Frontend Core (Auth Pages, Dashboard, Lessons) — Checkpoint 4
 
 **Date:** 2026-11-24
