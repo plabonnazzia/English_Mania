@@ -5,6 +5,20 @@ Instruction 10). Format: newest phase first.
 
 ---
 
+## [Phase 8] — Deployment — Checkpoint 8 (Final)
+
+**Date:** 2026-11-24
+**Branch:** `feature/deployment` (from `develop`)
+**Status:** ✅ Complete — all 8 phases finished.
+
+### Added
+- `.github/workflows/ci.yml` — GitHub Actions CI for both `backend` (with PostgreSQL 15 service) and `frontend`.
+- `backend/railway.json` — Railway build/start/healthcheck config.
+- `frontend/vercel.json` — Vercel Next.js config.
+- `docs/DEPLOYMENT.md` — Neon, Railway, and Vercel deployment instructions.
+
+---
+
 ## [Phase 7] — Testing — Checkpoint 7
 
 **Date:** 2026-11-24
