@@ -1,8 +1,132 @@
-// Prisma schema — FULL implementation in Phase 2.
-// Must match PROJECT_BRIEF.md Section 5 exactly (do not rename
-// fields/enums). This placeholder only proves the connection
-// configuration for Phase 1.
-//
-// generator client { provider = "prisma-client-js" }
-// datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
-// ... models: User, Lesson, Test, Question, Flashcard, Progress, Submission
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum TestType {
+  IELTS
+  GRE
+  TOEFL
+  PTE
+  SAT
+  DET
+  CAE
+  CPE
+}
+
+enum Section {
+  // IELTS/TOEFL/PTE common
+  READING
+  LISTENING
+  WRITING
+  SPEAKING
+  // GRE
+  VERBAL
+  QUANT
+  AWA
+  // SAT
+  SAT_READING_WRITING
+  SAT_MATH
+  // DET
+  DET_LITERACY
+  DET_CONVERSATION
+  DET_WRITING_SAMPLE
+  DET_SPEAKING_SAMPLE
+  // Cambridge
+  CAMBRIDGE_READING_USE_OF_ENGLISH
+  CAMBRIDGE_WRITING
+  CAMBRIDGE_LISTENING
+  CAMBRIDGE_SPEAKING
+}
+
+model User {
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  password   String
+  role       Role        @default(STUDENT)
+  flashcards Flashcard[]
+  progress   Progress[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.Text
+  videoUrl  String?
+  category  TestType
+  order     Int
+  createdAt DateTime @default(now())
+}
+
+model Test {
+  id        String     @id @default(uuid())
+  type      TestType
+  section   Section
+  title     String
+  duration  Int // in minutes
+  questions Question[]
+  progress  Progress[]
+  createdAt DateTime   @default(now())
+}
+
+model Question {
+  id            String  @id @default(uuid())
+  testId        String
+  questionText  String  @db.Text
+  questionType  String // MCQ, CLOZE, WORD_FORMATION, SPEAKING, WRITING_TASK
+  options       Json? // for MCQ / cloze options
+  correctAnswer String
+  audioUrl      String?
+  imageUrl      String?
+  test          Test    @relation(fields: [testId], references: [id])
+}
+
+model Flashcard {
+  id          String   @id @default(uuid())
+  userId      String
+  front       String
+  back        String
+  category    TestType
+  easeFactor  Float    @default(2.5)
+  interval    Int      @default(1)
+  repetitions Int      @default(0)
+  dueDate     DateTime @default(now())
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Progress {
+  id        String   @id @default(uuid())
+  userId    String
+  testId    String
+  score     Float
+  maxScore  Float
+  timeTaken Int // in seconds
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  test      Test     @relation(fields: [testId], references: [id])
+}
+
+model Submission {
+  id         String   @id @default(uuid())
+  userId     String
+  questionId String
+  testId     String
+  audioUrl   String? // for speaking responses
+  videoUrl   String? // for DET conversation section
+  textAnswer String?  @db.Text
+  score      Float?
+  createdAt  DateTime @default(now())
+}
