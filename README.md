@@ -5,9 +5,10 @@ Duolingo English Test (DET), and Cambridge (CAE/CPE)** — built with a
 **generic, reusable test engine** parameterized by `TestType` / `Section`
 (see `PROJECT_BRIEF.md` Section 1). No per-exam hardcoded modules.
 
-> **Status: Phase 1 complete (Checkpoint 1).** Scaffolding only —
-> database schema, auth, and APIs are Phase 2+ and have **not** been
-> implemented yet. See `CHANGELOG.md`.
+> **Status: Phase 2 complete (Checkpoint 2).** Database schema,
+> migrations, and auth (register/login/JWT) are implemented and
+> tested. Lesson/Test/Flashcard APIs are Phase 3 and have **not**
+> been implemented yet. See `CHANGELOG.md`.
 
 ## Tech Stack (PROJECT_BRIEF.md Section 3 — used exactly)
 
@@ -52,7 +53,9 @@ docker compose up -d
 cd backend
 cp .env.example .env        # fill in DATABASE_URL, JWT_SECRET, etc.
 npm install
-npm run dev                 # http://localhost:5000  (GET /health)
+npm run prisma:migrate      # apply migrations (creates tables)
+npm run dev                 # http://localhost:5000  (GET /health, /api/auth/*)
+npm test                    # Jest auth tests (requires DB running)
 ```
 
 ### 3. Frontend
