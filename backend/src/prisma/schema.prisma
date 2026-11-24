@@ -1,0 +1,8 @@
+// Prisma schema — FULL implementation in Phase 2.
+// Must match PROJECT_BRIEF.md Section 5 exactly (do not rename
+// fields/enums). This placeholder only proves the connection
+// configuration for Phase 1.
+//
+// generator client { provider = "prisma-client-js" }
+// datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+// ... models: User, Lesson, Test, Question, Flashcard, Progress, Submission
