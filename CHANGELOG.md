@@ -5,6 +5,18 @@ Instruction 10). Format: newest phase first.
 
 ---
 
+## [Phase 7] — Testing — Checkpoint 7
+
+**Date:** 2026-11-24
+**Branch:** `feature/testing` (from `develop`)
+**Status:** ✅ Complete — awaiting human review. Phase 8 NOT started.
+
+### Added & Verified
+- **Backend Jest**: 3 suites, **28/28 passed** (`auth.test.ts` 9, `sm2Algorithm.test.ts` 7, `scoreCalculator.test.ts` 12).
+- **Frontend Jest**: configured `next/jest` in `frontend/jest.config.js` and added `frontend/tests/api.test.ts` — **2/2 passed**.
+
+---
+
 ## [Phase 6] — Admin Panel — Checkpoint 6
 
 **Date:** 2026-11-24
