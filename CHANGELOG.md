@@ -5,6 +5,32 @@ Instruction 10). Format: newest phase first.
 
 ---
 
+## [Phase 4] — Frontend Core (Auth Pages, Dashboard, Lessons) — Checkpoint 4
+
+**Date:** 2026-11-24
+**Branch:** `feature/frontend-core` (from `develop`)
+**Status:** ✅ Complete — awaiting human review. Phase 5 NOT started.
+
+### Added
+- **API & Auth State**:
+  - `frontend/types/index.ts` — shared TypeScript interfaces (`User`, `TestType`, `Lesson`, `DashboardStats`, `ProgressItem`, `AuthResponse`).
+  - `frontend/lib/api.ts` — Axios instance with `NEXT_PUBLIC_API_URL` and JWT `Authorization` interceptor.
+  - `frontend/store/authStore.ts` — Zustand auth store (`token`, `user`, `setAuth`, `logout`, `hydrate` via `/api/auth/me`).
+- **Layout & Navigation**:
+  - `frontend/app/layout.tsx`, `frontend/app/page.tsx` — root layout with `Navbar` and landing page for all 7 exams.
+  - `frontend/components/Navbar.tsx` & `frontend/components/AuthGuard.tsx` — responsive nav + protected route wrapper.
+- **Auth Pages**:
+  - `frontend/app/(auth)/login/page.tsx` & `frontend/app/(auth)/register/page.tsx` — React Hook Form + Zod validation, connected to `/api/auth/login` and `/api/auth/register`.
+- **Dashboard & Lessons**:
+  - `frontend/app/(dashboard)/dashboard/page.tsx` — protected dashboard fetching `/api/progress/dashboard` (tests completed, average score, study time, flashcards due, per-exam breakdown, recent activity).
+  - `frontend/app/(dashboard)/lessons/page.tsx`, `frontend/app/(dashboard)/lessons/[id]/page.tsx`, `frontend/components/lessons/LessonContent.tsx` — lesson list with `TestType` category filter pills and lesson detail view with optional video player.
+
+### Verification
+- `cd frontend && npx tsc --noEmit` — exit 0 ✅
+- `cd frontend && npm run build` — exit 0 ✅ (all App Router routes compiled)
+
+---
+
 ## [Phase 3] — Core Backend APIs — Checkpoint 3
 
 **Date:** 2026-11-24
